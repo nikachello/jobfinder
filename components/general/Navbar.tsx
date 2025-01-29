@@ -1,24 +1,35 @@
 import Link from "next/link";
 import React from "react";
-import Logo from "@/public/logo.png";
 import Image from "next/image";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { ThemeToggle } from "./ThemeToggle";
+import Logo from "./Logo";
+import { auth, signOut } from "@/app/utils/auth";
 
 type Props = {};
 
-const Navbar = (props: Props) => {
+const Navbar = async (props: Props) => {
+  const session = await auth();
   return (
     <nav className="flex items-center justify-between py-5">
-      <Link href="/" className="flex items-center gap-2">
-        <Image src={Logo} alt="Logo job finder" width={40} height={40} />
-        <h1 className="text-2xl font-bold">
-          Job<span className="text-primary">Finder</span>
-        </h1>
-      </Link>
+      <Logo />
       <div className="flex gap-2 items-center ">
         <ThemeToggle />
-        <Button>Login</Button>
+        {session?.user ? (
+          <form
+            action={async () => {
+              "use server";
+              await signOut({ redirectTo: "/" });
+            }}
+          >
+            {" "}
+            <Button variant={"outline"}>გასვლა</Button>
+          </form>
+        ) : (
+          <Link className={buttonVariants({ variant: "outline" })} href="login">
+            შესვლა
+          </Link>
+        )}
       </div>
     </nav>
   );

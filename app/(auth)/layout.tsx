@@ -3,7 +3,11 @@ import React from "react";
 type Props = { children: React.ReactNode };
 
 const Layout = ({ children }: Props) => {
-  return <div>{children}</div>;
+  return (
+    <div className=" min-h-screen w-screen flex items-center justify-center">
+      {children}
+    </div>
+  );
 };
 
 export default Layout;
