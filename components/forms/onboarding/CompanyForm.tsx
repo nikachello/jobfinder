@@ -72,9 +72,15 @@ const CompanyForm = (props: Props) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>კომპანიის სახელი</FormLabel>
+                <FormLabel className="text-sm text-muted-foreground">
+                  კომპანიის სახელი
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="კომპანია" {...field} />
+                  <Input
+                    className="text-xs"
+                    placeholder="კომპანია"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,21 +92,32 @@ const CompanyForm = (props: Props) => {
             name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>კომპანიის მდებარეობა</FormLabel>
+                <FormLabel className="text-sm text-muted-foreground">
+                  კომპანიის მდებარეობა
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="აირჩიეთ მდებარეობა" />
+                      <SelectValue
+                        className="text-xs"
+                        placeholder="აირჩიეთ მდებარეობა"
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>მდებარეობა</SelectLabel>
+                      <SelectLabel className="text-sm text-muted-foreground">
+                        მდებარეობა
+                      </SelectLabel>
                       {cities.map((city) => (
-                        <SelectItem key={city.name_en} value={city.name_en}>
+                        <SelectItem
+                          className="text-xs"
+                          key={city.name_en}
+                          value={city.name_en}
+                        >
                           <span>{city.name_ka}</span>
                         </SelectItem>
                       ))}
@@ -118,9 +135,15 @@ const CompanyForm = (props: Props) => {
             name="website"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>კომპანიის ვებსაიტი</FormLabel>
+                <FormLabel className="text-sm text-muted-foreground">
+                  კომპანიის ვებსაიტი
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="https://website.ge" {...field} />
+                  <Input
+                    className="text-xs"
+                    placeholder="https://website.ge"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,9 +154,12 @@ const CompanyForm = (props: Props) => {
             name="about"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>კომპანიის შესახებ</FormLabel>
+                <FormLabel className="text-sm text-muted-foreground">
+                  კომპანიის შესახებ
+                </FormLabel>
                 <FormControl>
                   <Textarea
+                    className="text-xs"
                     placeholder="მოგვიყევით მეტი კომპანიის შესახებ"
                     {...field}
                   />
@@ -147,7 +173,9 @@ const CompanyForm = (props: Props) => {
             name="logo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>კომპანიის ლოგო</FormLabel>
+                <FormLabel className="text-sm text-muted-foreground">
+                  კომპანიის ლოგო
+                </FormLabel>
                 <FormControl>
                   <div>
                     {field.value ? (

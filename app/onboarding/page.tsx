@@ -17,9 +17,9 @@ const checkIfUserHasFinishedOnboarding = async (userId: string) => {
     },
   });
 
-  // if (user?.onBoardingCompleted === true) {
-  //   return redirect("/");
-  // }
+  if (user?.onBoardingCompleted === true) {
+    return redirect("/");
+  }
 
   return user;
 };

@@ -7,3 +7,9 @@ export const companySchema = z.object({
   logo: z.string().min(1, "გთხოვთ ატვირთოთ ლოგო"),
   website: z.string().url("შეიყვანეთ სწორი მისამართი"),
 });
+
+export const jobSeekerSchema = z.object({
+  name: z.string().min(2, "მინიმუმ 2 სიმბოლო"),
+  about: z.string().min(10, "გთხოვთ გვითხარით მეტი თქვენს შესახებ"),
+  resume: z.string().min(1, "გთხოვთ ატვირთეთ CV"),
+});
