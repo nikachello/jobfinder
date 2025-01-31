@@ -1,16 +1,17 @@
 import Link from "next/link";
 import React from "react";
-import Image from "next/image";
 import { Button, buttonVariants } from "../ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import Logo from "./Logo";
 import { auth, signOut } from "@/app/utils/auth";
 import UserDropdown from "./UserDropdown";
+import { getUserType } from "@/app/utils/getUserType";
 
 type Props = {};
 
 const Navbar = async (props: Props) => {
   const session = await auth();
+  const userType = await getUserType(session?.user?.id as string);
   return (
     <nav className="flex items-center justify-between py-5">
       <Logo />
@@ -18,9 +19,12 @@ const Navbar = async (props: Props) => {
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-5">
         <ThemeToggle />
-        <Link className={buttonVariants({ size: "lg" })} href="/post-job">
-          დაამატე ვაკანსია
-        </Link>
+        {userType === "COMPANY" && session?.user && (
+          <Link className={buttonVariants({ size: "lg" })} href="/post-job">
+            დაამატე ვაკანსია
+          </Link>
+        )}
+
         {session?.user ? (
           <UserDropdown
             name={session.user.name as string}

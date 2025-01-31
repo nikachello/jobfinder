@@ -13,3 +13,15 @@ export const jobSeekerSchema = z.object({
   about: z.string().min(10, "გთხოვთ გვითხარით მეტი თქვენს შესახებ"),
   resume: z.string().min(1, "გთხოვთ ატვირთეთ CV"),
 });
+
+export const jobSchema = z.object({
+  jobTitle: z.string().min(2, "შეიყვანეთ დასახელება სრულად"),
+  employmentType: z.string().min(2, "გთხოვთ აირჩიეთ დასაქმების ტიპი"),
+  location: z.string().min(2, "გთხოვთ აირჩიეთ მდებარეობა"),
+  salaryForm: z.number(),
+  salaryTo: z.number(),
+  jobDescription: z.string().min(1, "შეიყვანეთ პოზიციის აღწერა"),
+  listingDuration: z.number().min(1, "აირჩიეთ განცხადების ხანგრძლივობა"),
+
+  benefits: z.array(z.string()).min(1, "აირჩიეთ მინიმუმ 1 ბენეფიტი"),
+});
