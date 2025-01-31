@@ -5,6 +5,7 @@ import { Button, buttonVariants } from "../ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import Logo from "./Logo";
 import { auth, signOut } from "@/app/utils/auth";
+import UserDropdown from "./UserDropdown";
 
 type Props = {};
 
@@ -13,20 +14,24 @@ const Navbar = async (props: Props) => {
   return (
     <nav className="flex items-center justify-between py-5">
       <Logo />
-      <div className="flex gap-2 items-center ">
+
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center gap-5">
         <ThemeToggle />
+        <Link className={buttonVariants({ size: "lg" })} href="/post-job">
+          დაამატე ვაკანსია
+        </Link>
         {session?.user ? (
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/" });
-            }}
-          >
-            {" "}
-            <Button variant={"outline"}>გასვლა</Button>
-          </form>
+          <UserDropdown
+            name={session.user.name as string}
+            email={session.user.email as string}
+            image={session.user.image as string}
+          />
         ) : (
-          <Link className={buttonVariants({ variant: "outline" })} href="login">
+          <Link
+            href="/login"
+            className={buttonVariants({ variant: "outline", size: "lg" })}
+          >
             შესვლა
           </Link>
         )}
