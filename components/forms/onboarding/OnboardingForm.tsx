@@ -8,9 +8,7 @@ import UserTypeSelection from "./UserTypeForm";
 import { ArrowLeft } from "lucide-react";
 import JobSeekerForm from "./JobSeekerForm";
 
-type Props = {};
-
-const OnboardingForm = (props: Props) => {
+const OnboardingForm = () => {
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState<UserSelectionType>(null);
 
@@ -31,7 +29,7 @@ const OnboardingForm = (props: Props) => {
       case 2:
         return userType === "company" ? <CompanyForm /> : <JobSeekerForm />;
       default:
-        null;
+        return null;
     }
   };
 

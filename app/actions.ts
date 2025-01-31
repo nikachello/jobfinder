@@ -36,6 +36,10 @@ export const createCompany = async (data: z.infer<typeof companySchema>) => {
 
   const validateData = companySchema.parse(data);
 
+  if (!session?.id) {
+    throw new Error("User ID is required.");
+  }
+
   await prisma.user.update({
     where: {
       id: session!.id,

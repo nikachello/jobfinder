@@ -22,9 +22,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import PDFImage from "@/public/pdf.png";
 
-type Props = {};
-
-const JobSeekerForm = (props: Props) => {
+const JobSeekerForm = () => {
   const form = useForm<z.infer<typeof jobSeekerSchema>>({
     resolver: zodResolver(jobSeekerSchema),
     defaultValues: {

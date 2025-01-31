@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { companySchema } from "@/app/utils/zodSchemas";
@@ -26,16 +26,12 @@ import { cities } from "@/app/utils/citiesList";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadDropzone } from "@/components/general/UploadThingReexported";
 import { createCompany } from "@/app/actions";
-import { error } from "console";
 import { Button } from "@/components/ui/button";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { XIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
-type Props = {};
-
-const CompanyForm = (props: Props) => {
+const CompanyForm = () => {
   const form = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
     defaultValues: {

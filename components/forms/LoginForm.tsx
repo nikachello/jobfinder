@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Button } from "../ui/button";
+
 import type { SVGProps } from "react";
 import { auth, signIn } from "@/app/utils/auth";
 import GeneralSubmitButton from "../general/SubmitButton";
@@ -52,9 +52,7 @@ const GoogleIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-type Props = {};
-
-const LoginForm = async (props: Props) => {
+const LoginForm = async () => {
   const session = await auth();
   if (session?.user) {
     return redirect("/");
