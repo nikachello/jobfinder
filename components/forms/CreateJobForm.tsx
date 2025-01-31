@@ -15,9 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 
-type Props = {};
-
-const CreateJobForm = (props: Props) => {
+const CreateJobForm = () => {
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
     defaultValues: {

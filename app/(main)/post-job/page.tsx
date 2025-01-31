@@ -12,7 +12,6 @@ import InngestLogo from "@/public/inngest-locale.png";
 import Image from "next/image";
 import CreateJobForm from "@/components/forms/CreateJobForm";
 import { requireUser } from "@/app/utils/requireUser";
-import { prisma } from "@/app/utils/db";
 import { redirect } from "next/navigation";
 import { UserType } from "@prisma/client";
 import { getUserType } from "@/app/utils/getUserType";
@@ -84,9 +83,7 @@ const stats = [
   { id: 3, value: "500+", label: "დარეგისტრირებული კომპანია" },
 ];
 
-type Props = {};
-
-const Page = async (props: Props) => {
+const Page = async () => {
   const session = await requireUser();
   const userType = await getUserType(session?.id as string);
   if (userType === UserType.JOB_SEEKER) {

@@ -5,9 +5,7 @@ import Link from "next/link";
 import { requireUser } from "@/app/utils/requireUser";
 import { getUserType } from "@/app/utils/getUserType";
 
-type Props = {};
-
-const PostJobButton = async (props: Props) => {
+const PostJobButton = async () => {
   const user = await requireUser();
   const userType = await getUserType(user?.id as string);
   if (user && userType === "COMPANY") {

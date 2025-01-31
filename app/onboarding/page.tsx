@@ -4,8 +4,6 @@ import { requireUser } from "../utils/requireUser";
 import { prisma } from "../utils/db";
 import { redirect } from "next/navigation";
 
-type Props = {};
-
 const checkIfUserHasFinishedOnboarding = async (userId: string) => {
   "use server";
   const user = await prisma.user.findUnique({
@@ -24,7 +22,7 @@ const checkIfUserHasFinishedOnboarding = async (userId: string) => {
   return user;
 };
 
-const Page = async (props: Props) => {
+const Page = async () => {
   const session = await requireUser();
   await checkIfUserHasFinishedOnboarding(session?.id as string);
 
