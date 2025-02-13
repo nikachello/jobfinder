@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { companySchema, jobSeekerSchema } from "./utils/zodSchemas";
+import { companySchema, jobSchema, jobSeekerSchema } from "./utils/zodSchemas";
 import { prisma } from "./utils/db";
 import { requireUser } from "./utils/requireUser";
 import { redirect } from "next/navigation";
@@ -85,6 +85,53 @@ export const createJobSeeker = async (
           ...validateData,
         },
       },
+    },
+  });
+
+  return redirect("/");
+};
+
+export const createJob = async (data: z.infer<typeof jobSchema>) => {
+  const user = await requireUser();
+
+  const req = await request();
+
+  const decision = await aj.protect(req);
+
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
+  }
+
+  const validateData = jobSchema.parse(data);
+
+  if (!user?.id) {
+    throw new Error("User ID is required");
+  }
+
+  const company = await prisma.company.findUnique({
+    where: {
+      userId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!company?.id) {
+    return redirect("/");
+  }
+
+  await prisma.jobPost.create({
+    data: {
+      jobDescription: validateData.jobDescription,
+      jobTitle: validateData.jobTitle,
+      employmentType: validateData.employmentType,
+      location: validateData.location,
+      salaryFrom: validateData.salaryFrom,
+      salaryTo: validateData.salaryTo,
+      listingDuration: validateData.listingDuration,
+      benefits: validateData.benefits,
+      companyId: company?.id,
     },
   });
 

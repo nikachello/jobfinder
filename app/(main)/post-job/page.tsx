@@ -15,6 +15,7 @@ import { requireUser } from "@/app/utils/requireUser";
 import { redirect } from "next/navigation";
 import { UserType } from "@prisma/client";
 import { getUserType } from "@/app/utils/getUserType";
+import { getCompanyInfo } from "@/app/utils/getCompanyInfo";
 
 const companies = [
   {
@@ -86,13 +87,19 @@ const stats = [
 const Page = async () => {
   const session = await requireUser();
   const userType = await getUserType(session?.id as string);
+  const companyInfo = await getCompanyInfo(session?.id as string);
+  console.log(session?.id);
   if (userType === UserType.JOB_SEEKER) {
+    redirect("/");
+  }
+
+  if (!companyInfo) {
     redirect("/");
   }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
-      <CreateJobForm />
+      <CreateJobForm company={companyInfo} />
       <div className="col-span-1">
         <Card>
           <CardHeader>

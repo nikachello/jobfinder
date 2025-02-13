@@ -40,7 +40,7 @@ const UserDropdown = ({ email, name, image }: Props) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/favourites">
+            <Link href="/favorites">
               <Heart size={16} strokeWidth={2} className="opacity-60" />
               <span className="text-sm">შენახული ვაკანსიები</span>
             </Link>

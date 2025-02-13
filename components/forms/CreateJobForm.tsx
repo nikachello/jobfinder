@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Form,
   FormControl,
@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { jobSchema } from "@/app/utils/zodSchemas";
+import { companySchema, jobSchema } from "@/app/utils/zodSchemas";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useForm } from "react-hook-form";
@@ -26,8 +26,16 @@ import {
 import { cities } from "@/app/utils/citiesList";
 import SalaryRangeSelector from "../general/SalaryRangeSelector";
 import JobDescriptionEditor from "../rich-text-editor/JobDescriptionEditor";
+import BenefitsSelector from "../general/BenefitsSelector";
+import JobListingDurationSelector from "../general/JobListingDurationSelector";
+import { Button } from "../ui/button";
+import { createJob } from "@/app/actions";
 
-const CreateJobForm = () => {
+type Props = {
+  company: z.infer<typeof companySchema>;
+};
+
+const CreateJobForm = ({ company }: Props) => {
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
@@ -37,13 +45,33 @@ const CreateJobForm = () => {
       jobTitle: "",
       listingDuration: 30,
       location: "",
-      salaryForm: 0,
+      salaryFrom: 0,
       salaryTo: 0,
     },
   });
+
+  const [pending, setPending] = useState(false);
+
+  const onSubmit = async (values: z.infer<typeof jobSchema>) => {
+    console.log("should work");
+    try {
+      setPending(true);
+      await createJob(values);
+    } catch (error) {
+      if (error instanceof Error && error.message !== "NEXT_REDIRECT") {
+        console.log(error);
+      }
+    } finally {
+      setPending(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className="col-span-1 lg:col-span-2 flex flex-col gap-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="col-span-1 lg:col-span-2 flex flex-col gap-8"
+      >
         <Card>
           <CardHeader>
             <CardTitle>პოზიციის აღწერა</CardTitle>
@@ -133,6 +161,7 @@ const CreateJobForm = () => {
                 )}
               />
 
+              {/* WIP: Fix salary range (it submits 0-0 to db) */}
               <FormItem>
                 <FormLabel>სახელფასო დიაპაზონი</FormLabel>
                 <FormControl>
@@ -164,10 +193,10 @@ const CreateJobForm = () => {
               control={form.control}
               name="benefits"
               render={({ field }) => (
-                <FormItem className="mt-6">
+                <FormItem className="mt-6 mb-6">
                   <FormLabel>ბენეფიტები</FormLabel>
                   <FormControl>
-                    <p>აირჩიეთ ბენეფიტები</p>
+                    <BenefitsSelector field={field as any} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -175,6 +204,64 @@ const CreateJobForm = () => {
             />
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>კომპანიის ინფორმაცია</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="companyName"
+                disabled
+                render={({ field }) => (
+                  <FormItem className="mt-6">
+                    <FormLabel>კომპანია</FormLabel>
+                    <FormControl>
+                      <Input defaultValue={company.name} disabled {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="companyLocation"
+                disabled
+                render={() => (
+                  <FormItem className="mt-6">
+                    <FormLabel>მდებარეობა</FormLabel>
+                    <Input value={company.location} disabled />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>ვაკანსიის ვადა</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FormField
+              control={form.control}
+              name="listingDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <JobListingDurationSelector field={field as any} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            ></FormField>
+          </CardContent>
+        </Card>
+        <Button type="submit" className="w-full" disabled={pending}>
+          {pending ? "დაელოდეთ..." : "დაამატე ვაკანსია"}
+        </Button>
       </form>
     </Form>
   );
