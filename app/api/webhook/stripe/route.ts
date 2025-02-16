@@ -58,6 +58,8 @@ export async function POST(req: Request) {
         status: "ACTIVE",
       },
     });
+
+    console.log("job has been updated");
   }
 
   return new Response(null, { status: 200 });
