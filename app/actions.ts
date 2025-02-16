@@ -7,6 +7,8 @@ import { requireUser } from "./utils/requireUser";
 import { redirect } from "next/navigation";
 import arcjet, { detectBot, shield } from "./utils/arcjet";
 import { request } from "@arcjet/next";
+import { stripe } from "./utils/stripe";
+import { jobListingDurationPricing } from "./utils/jobListingDurationPricing";
 
 const aj = arcjet
   .withRule(
@@ -114,6 +116,11 @@ export const createJob = async (data: z.infer<typeof jobSchema>) => {
     },
     select: {
       id: true,
+      user: {
+        select: {
+          stripeCustomerId: true,
+        },
+      },
     },
   });
 
@@ -121,7 +128,29 @@ export const createJob = async (data: z.infer<typeof jobSchema>) => {
     return redirect("/");
   }
 
-  await prisma.jobPost.create({
+  let stripeCustomerId = company.user.stripeCustomerId;
+
+  if (!stripeCustomerId) {
+    const customer = await stripe.customers.create({
+      email: user.email as string,
+      name: user.name as string,
+    });
+
+    stripeCustomerId = customer.id;
+
+    // update user with stripe customer id
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        stripeCustomerId: customer.id,
+      },
+    });
+  }
+
+  const jobPost = await prisma.jobPost.create({
     data: {
       jobDescription: validateData.jobDescription,
       jobTitle: validateData.jobTitle,
@@ -133,7 +162,43 @@ export const createJob = async (data: z.infer<typeof jobSchema>) => {
       benefits: validateData.benefits,
       companyId: company?.id,
     },
+    select: {
+      id: true,
+    },
   });
 
-  return redirect("/");
+  const pricingTier = jobListingDurationPricing.find(
+    (tier) => tier.days === validateData.listingDuration
+  );
+
+  if (!pricingTier) {
+    throw new Error("Invalid listing duration selected");
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    customer: stripeCustomerId,
+    line_items: [
+      {
+        price_data: {
+          product_data: {
+            name: `ვაკანსია ${pricingTier.days} დღით`,
+            description: pricingTier.description,
+          },
+          currency: "GEL",
+          unit_amount: pricingTier.price * 100,
+        },
+        quantity: 1,
+      },
+    ],
+
+    metadata: {
+      jobId: jobPost.id,
+    },
+
+    mode: "payment",
+    success_url: `${process.env.NEXT_PUBLIC_URL}/payment/success`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment/cancel`,
+  });
+
+  return redirect(session.url as string);
 };
