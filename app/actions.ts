@@ -9,6 +9,7 @@ import arcjet, { detectBot, shield } from "./utils/arcjet";
 import { request } from "@arcjet/next";
 import { stripe } from "./utils/stripe";
 import { jobListingDurationPricing } from "./utils/jobListingDurationPricing";
+import { inngest } from "./utils/inngest/client";
 
 const aj = arcjet
   .withRule(
@@ -174,6 +175,14 @@ export const createJob = async (data: z.infer<typeof jobSchema>) => {
   if (!pricingTier) {
     throw new Error("Invalid listing duration selected");
   }
+
+  await inngest.send({
+    name: "job/created",
+    data: {
+      jobId: jobPost.id,
+      expirationDays: validateData.listingDuration,
+    },
+  });
 
   const session = await stripe.checkout.sessions.create({
     customer: stripeCustomerId,
